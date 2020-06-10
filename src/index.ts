@@ -246,7 +246,7 @@ class ServicesLib {
    * Fecha a conexão com o servidor
    */
   public async close() {
-    this._closed = true; onnection.on('close'
+    this._closed = true;
     await this.connection.close();
   }
 
