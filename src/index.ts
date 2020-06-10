@@ -85,9 +85,10 @@ class ServicesLib {
       //log de conexão
       console.log('RABBITMQ Conectado.');
 
-      if (!this._closed)
-        //Evento de desconexão
-        this.connection.on('close', () => {
+
+      //Evento de desconexão
+      this.connection.on('close', () => {
+        if (!this._closed) {
           //log de desconexão
           console.log('Error RABBITMQ Desconectado.');
           this.connection = null;
@@ -99,7 +100,9 @@ class ServicesLib {
             console.log('Tentando conectar ao RABBITMQ...');
             this.init();
           }, 1000);
-        });
+        }
+
+      });
     } catch (err) {
       console.log('Error ao tentar conectar no RABBITMQ.');
 
