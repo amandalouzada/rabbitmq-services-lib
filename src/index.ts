@@ -36,6 +36,7 @@ class ServicesLib {
   private defaultTimeOut = 30000
   private defaultTtl = 3600000
   private consumes: { [queue: string]: onMessageType; } = {}
+  private _closed = false;
 
   public constructor({ exchange, prefetch = 1 }: { exchange: string; prefetch?: number; }) {
     this.exchange = exchange;
@@ -84,20 +85,21 @@ class ServicesLib {
       //log de conexão
       console.log('RABBITMQ Conectado.');
 
-      //Evento de desconexão
-      this.connection.on('close', () => {
-        //log de desconexão
-        console.log('Error RABBITMQ Desconectado.');
-        this.connection = null;
-        this.channel = null;
+      if (!this._closed)
+        //Evento de desconexão
+        this.connection.on('close', () => {
+          //log de desconexão
+          console.log('Error RABBITMQ Desconectado.');
+          this.connection = null;
+          this.channel = null;
 
-        //tenta se reconectar depois de 1 segundo caso a conexão falhe
-        setTimeout(() => {
-          //log de tentativa
-          console.log('Tentando conectar ao RABBITMQ...');
-          this.init();
-        }, 1000);
-      });
+          //tenta se reconectar depois de 1 segundo caso a conexão falhe
+          setTimeout(() => {
+            //log de tentativa
+            console.log('Tentando conectar ao RABBITMQ...');
+            this.init();
+          }, 1000);
+        });
     } catch (err) {
       console.log('Error ao tentar conectar no RABBITMQ.');
 
@@ -244,6 +246,7 @@ class ServicesLib {
    * Fecha a conexão com o servidor
    */
   public async close() {
+    this._closed = true; onnection.on('close'
     await this.connection.close();
   }
 
